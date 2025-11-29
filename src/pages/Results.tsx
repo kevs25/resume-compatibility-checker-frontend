@@ -62,7 +62,7 @@ export function Results() {
   
   // Check if this is AI analysis with nested structure
   const isAIAnalysis = result.analysis !== undefined
-  const analysis = isAIAnalysis ? result.analysis : result
+  const analysis = isAIAnalysis ? result.analysis : null
   
   // Extract data with fallbacks for different API response formats
   const matchScore = Math.round(
@@ -75,13 +75,13 @@ export function Results() {
   
   // Extract skills - handle both nested and flat structures
   const matchedSkills = 
-    (isAIAnalysis ? analysis?.matched_requirements : result.matched_skills) || []
+    (isAIAnalysis && analysis?.matched_requirements ? analysis.matched_requirements : result.matched_skills) || []
   const missingSkills = 
-    (isAIAnalysis ? analysis?.missing_requirements : result.missing_skills) || []
+    (isAIAnalysis && analysis?.missing_requirements ? analysis.missing_requirements : result.missing_skills) || []
   
   // Extract strengths and gaps - handle different response formats
-  let strengths: string[] = analysis?.strengths || result.strengths || []
-  let gaps: string[] = analysis?.gaps || result.gaps || []
+  let strengths: string[] = (analysis?.strengths || result.strengths || []) as string[]
+  let gaps: string[] = (analysis?.gaps || result.gaps || []) as string[]
   
   // If insights exist, try to extract strengths/gaps from them
   if (result.insights && Array.isArray(result.insights)) {
@@ -120,9 +120,9 @@ export function Results() {
   
   // Extract overall assessment
   const overallAssessment = analysis?.overall_assessment || result.overall_assessment
-  const applicationRecommendation = analysis?.application_recommendation
-  const experienceMatch = analysis?.experience_match
-  const skillsMatch = analysis?.skills_match
+  const applicationRecommendation = isAIAnalysis && analysis ? analysis.application_recommendation : undefined
+  const experienceMatch = isAIAnalysis && analysis ? analysis.experience_match : undefined
+  const skillsMatch = isAIAnalysis && analysis ? analysis.skills_match : undefined
 
   const handleDownloadReport = () => {
     const report = {
