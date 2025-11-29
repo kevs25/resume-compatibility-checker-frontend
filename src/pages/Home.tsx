@@ -30,7 +30,10 @@ export function Home() {
       formData.append("resume", resumeFile)
       formData.append("job_description", jobDescription)
 
-      const endpoint = analysisType === "ai" ? "/api/analyze-ai" : "/api/analyze"
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ""
+      const endpointPath = analysisType === "ai" ? "/api/analyze-ai" : "/api/analyze"
+      const endpoint = apiBaseUrl ? `${apiBaseUrl}${endpointPath}` : endpointPath
+      
       if (analysisType === "ai") {
         formData.append("model", "llama-free")
       } else {
